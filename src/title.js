@@ -14,28 +14,26 @@ var MyLayer = cc.Layer.extend({
          Title_png.setPosition(size.width / 2, size.height / 2 + 50);
         this.addChild(Title_png);
         //add code
-
-
-        // タップイベントリスナーを登録する
-        /*cc.eventManager.addListener({
+         //タップイベントリスナーを登録する
+        cc.eventManager.addListener({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: this.onTouchBegan,
             onTouchMoved: this.onTouchMoved,
             onTouchEnded: this.onTouchEnded
-        }, this);*/
+        }, this);
 
         return true;
     },
-/*
+
     onTouchBegan: function(touch, event) {
         return true;
     },
     onTouchMoved: function(touch, event) {},
     onTouchEnded: function(touch, event) {
         // 次のシーンに切り替える
-        cc.director.runScene(new Scene());
-    },*/
+        cc.director.runScene(new gameScene());
+    },
 });
 
 var MyScene = cc.Scene.extend({
