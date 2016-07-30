@@ -14,7 +14,7 @@ var gameGravity = -0.05;
 var gameThrust = 0.1;
 //パーティクル
 var emitter;
-var　 audioEngine;
+var audioEngine;
 
 var gameScene = cc.Scene.extend({
 
@@ -28,8 +28,7 @@ var gameScene = cc.Scene.extend({
     audioEngine = cc.audioEngine;
     //bgm再生
     if (!audioEngine.isMusicPlaying()) {
-      //audioEngine.playMusic("res/bgm_main.mp3", true);
-      //audioEngine.playMusic(res.bgm_main, true);
+      audioEngine.playMusic(res.bgm_main, true);
     }
   },
 
@@ -99,15 +98,15 @@ var ScrollingBG = cc.Sprite.extend({
   //onEnterメソッドはスプライト描画の際に必ず呼ばれる
   onEnter: function() {
     //背景画像の描画開始位置 横960の画像の中心が、画面の端に設置される
-    this.setPosition(size.width, size.height / 2);
+    this.setPosition(size.width - 180, size.height / 2);
     //  this.setPosition(480,160);
   },
   scroll: function() {
     //座標を更新する
     this.setPosition(this.getPosition().x - scrollSpeed, this.getPosition().y);
     //画面の端に到達したら反対側の座標にする
-    if (this.getPosition().x < 0) {
-      this.setPosition(this.getPosition().x + 50, this.getPosition().y);
+    if (this.getPosition().x - 180 < 0) {
+      this.setPosition(this.getPosition().x + 100, this.getPosition().y);
     }
   }
 });
@@ -179,9 +178,9 @@ var Asteroid = cc.Sprite.extend({
     //  audioEngine.playEffect("res/se_bang.mp3");
       //audioEngine.playEffect(res.se_bang);
       //bgmの再生をとめる
-      if (audioEngine.isMusicPlaying()) {
+      /*if (audioEngine.isMusicPlaying()) {
         audioEngine.stopMusic();
-      }
+      }*/
       restartGame();
     }
     //画面の外にでた小惑星を消去する処理
@@ -196,7 +195,7 @@ function restartGame() {
   ship.setPosition(ship.getPosition().x, 160);
   ship.invulnerability = 100;
   //bgmリスタート
-  if (!audioEngine.isMusicPlaying()) {
+  /*if (!audioEngine.isMusicPlaying()) {
     audioEngine.resumeMusic();
-  }
+  }*/
 }
