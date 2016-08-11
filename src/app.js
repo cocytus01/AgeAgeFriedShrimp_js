@@ -9,6 +9,7 @@ var background;
 var scrollSpeed = 1;
 //宇宙船で追加した部分　重力
 var ship;
+var i =0;
 var gameGravity = -0.05;
 //宇宙船を操作するで追加した部分 エンジンの推進力
 var gameThrust = 0.1;
@@ -41,7 +42,7 @@ var game = cc.Layer.extend({
     size = cc.director.getWinSize();
     //BGMと効果音のエンジンを追加
 
-    //宇宙船を操作するで追加した部分
+    //宇宙船を操作するで追加したマウスの部分
     cc.eventManager.addListener({
       event: cc.EventListener.MOUSE,
       onMouseDown: function(event) {
@@ -56,6 +57,18 @@ var game = cc.Layer.extend({
     background = new ScrollingBG();
     this.addChild(background);
 
+    bgrockup = new ScrollingROCKUP();
+    this.addChild(bgrockup);
+
+    bgrockunder = new ScrollingROCKUNDER();
+    this.addChild(bgrockunder);
+
+    bgup = new ScrollingUP();
+    this.addChild(bgup);
+
+    bgunder = new ScrollingUNDER();
+    this.addChild(bgunder);
+
     ship = new Ship();
     this.addChild(ship);
 
@@ -66,7 +79,7 @@ var game = cc.Layer.extend({
     //ここからパーティクルの設定
     emitter = cc.ParticleSun.create();
     this.addChild(emitter, 1);
-    var myTexture = cc.textureCache.addImage(res.nagoya0_png);
+    var myTexture = cc.textureCache.addImage(res.particle_texture);
     emitter.setTexture(myTexture);
     emitter.setStartSize(2);
     emitter.setEndSize(4);
@@ -75,6 +88,10 @@ var game = cc.Layer.extend({
   update: function(dt) {
     //backgroundのscrollメソッドを呼び出す
     background.scroll();
+    bgrockup.scroll();
+    bgrockunder.scroll();
+    bgup.scroll();
+    bgunder.scroll();
     ship.updateY();
   },
   //小惑星の生成で追加
@@ -88,6 +105,7 @@ var game = cc.Layer.extend({
 
 });
 
+//---------------こっから背景やぞ------------------
 //スクロール移動する背景クラス
 var ScrollingBG = cc.Sprite.extend({
   //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
@@ -98,18 +116,111 @@ var ScrollingBG = cc.Sprite.extend({
   //onEnterメソッドはスプライト描画の際に必ず呼ばれる
   onEnter: function() {
     //背景画像の描画開始位置 横960の画像の中心が、画面の端に設置される
-    this.setPosition(size.width - 180, size.height / 2);
-    //  this.setPosition(480,160);
+    this.setPosition(size.width, size.height/2);
+    //this.setPosition(480,160);
   },
   scroll: function() {
     //座標を更新する
     this.setPosition(this.getPosition().x - scrollSpeed, this.getPosition().y);
     //画面の端に到達したら反対側の座標にする
-    if (this.getPosition().x - 180 < 0) {
-      this.setPosition(this.getPosition().x + 100, this.getPosition().y);
+    if (this.getPosition().x < 0) {
+      this.setPosition(this.getPosition().x + 320, this.getPosition().y);
     }
   }
 });
+
+//背景クラス(上の岩)
+var ScrollingROCKUP = cc.Sprite.extend({
+  //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
+  ctor: function() {
+    this._super();
+    this.initWithFile(res.uprock_png);
+  },
+  //onEnterメソッドはスプライト描画の際に必ず呼ばれる
+  onEnter: function() {
+    //背景画像の描画開始位置 横960の画像の中心が、画面の端に設置される
+    this.setPosition(size.width, size.height*0.9);
+    //this.setPosition(180,160);
+  },
+  scroll: function() {
+    //座標を更新する
+    this.setPosition(this.getPosition().x - scrollSpeed * 1.5, this.getPosition().y);
+    //画面の端に到達したら反対側の座標にする
+    if (this.getPosition().x < 0) {
+      this.setPosition(this.getPosition().x + 320, this.getPosition().y);
+    }
+  }
+});
+
+//背景クラス(下の岩)
+var ScrollingROCKUNDER = cc.Sprite.extend({
+  //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
+  ctor: function() {
+    this._super();
+    this.initWithFile(res.underrock_png);
+  },
+  //onEnterメソッドはスプライト描画の際に必ず呼ばれる
+  onEnter: function() {
+    //背景画像の描画開始位置 横960の画像の中心が、画面の端に設置される
+    this.setPosition(size.width, 0);
+  },
+  scroll: function() {
+    //座標を更新する
+    this.setPosition(this.getPosition().x - scrollSpeed * 1.5, this.getPosition().y);
+    //画面の端に到達したら反対側の座標にする
+    if (this.getPosition().x < 0) {
+      this.setPosition(this.getPosition().x + 320, this.getPosition().y);
+    }
+  }
+});
+
+
+//背景クラス(上の床)
+var ScrollingUP = cc.Sprite.extend({
+  //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
+  ctor: function() {
+    this._super();
+    //this.initWithFile(res.up_png);
+  },
+  //onEnterメソッドはスプライト描画の際に必ず呼ばれる
+  onEnter: function() {
+    //背景画像の描画開始位置 横960の画像の中心が、画面の端に設置される
+    this.setPosition(size.width, size.height);
+    //this.setPosition(180,160);
+  },
+  scroll: function() {
+    //座標を更新する
+    this.setPosition(this.getPosition().x - scrollSpeed * 2, this.getPosition().y);
+    //画面の端に到達したら反対側の座標にする
+    if (this.getPosition().x < 0) {
+      this.setPosition(this.getPosition().x + 320, this.getPosition().y);
+    }
+  }
+});
+
+//背景クラス(下の床)
+var ScrollingUNDER = cc.Sprite.extend({
+  //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
+  ctor: function() {
+    this._super();
+    //this.initWithFile(res.under_png);
+  },
+  //onEnterメソッドはスプライト描画の際に必ず呼ばれる
+  onEnter: function() {
+    //背景画像の描画開始位置 横960の画像の中心が、画面の端に設置される
+    this.setPosition(size.width, 0);
+  },
+  scroll: function() {
+    //座標を更新する
+    this.setPosition(this.getPosition().x - scrollSpeed * 2, this.getPosition().y);
+    //画面の端に到達したら反対側の座標にする
+    if (this.getPosition().x < 0) {
+      this.setPosition(this.getPosition().x + 320, this.getPosition().y);
+    }
+  }
+});
+
+//----------------ここまで背景やぞ-------------------------
 
 //重力（仮）で落下する　宇宙船　
 var Ship = cc.Sprite.extend({
@@ -130,8 +241,16 @@ var Ship = cc.Sprite.extend({
       this.ySpeed += gameThrust;
       //ここでパーティクルエフェクトを宇宙船のすぐ後ろに配置している
       emitter.setPosition(this.getPosition().x - 25, this.getPosition().y);
+      //アニメーション
+      i+=1;
+      if(i==2){this.initWithFile(res.shrimp02_png);}
+      if(i==3){this.initWithFile(res.shrimp03_png);}
+      if(i==4){this.initWithFile(res.shrimp04_png);}
+      if(i==5){i=1}
+
     } else {
       //エンジンOffのときは画面外に配置
+      this.initWithFile(res.shrimp01_png);
       emitter.setPosition(this.getPosition().x - 250, this.getPosition().y);
     }
 
@@ -156,12 +275,12 @@ var Ship = cc.Sprite.extend({
 var Asteroid = cc.Sprite.extend({
   ctor: function() {
     this._super();
-    this.initWithFile(res.nagoya0_png);
+    this.initWithFile(res.nagoya00_png);
   },
   onEnter: function() {
     this._super();
     this.setPosition(600, Math.random() * 320);
-    var moveAction = cc.MoveTo.create(2.5, new cc.Point(-100, Math.random() * 320));
+    var moveAction = cc.MoveTo.create(3.5, new cc.Point(-100, Math.random() * 320));
     this.runAction(moveAction);
     this.scheduleUpdate();
   },
@@ -175,13 +294,13 @@ var Asteroid = cc.Sprite.extend({
       //ボリュームを上げる
       audioEngine.setEffectsVolume(audioEngine.getEffectsVolume() + 0.3);
       //効果音を再生する
-    //  audioEngine.playEffect("res/se_bang.mp3");
+      audioEngine.playEffect("res/se_get.mp3");
       //audioEngine.playEffect(res.se_bang);
       //bgmの再生をとめる
       /*if (audioEngine.isMusicPlaying()) {
         audioEngine.stopMusic();
       }*/
-      restartGame();
+      //restartGame();
     }
     //画面の外にでた小惑星を消去する処理
     if (this.getPosition().x < -50) {

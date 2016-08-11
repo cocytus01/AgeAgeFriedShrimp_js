@@ -43,6 +43,7 @@ var MyLayer = cc.Layer.extend({
           audioEngine.stopMusic();
         }
         // 次のシーンに切り替える
+        audioEngine.playEffect("res/se_select16.wav");
         cc.director.runScene(new gameScene());
     },
 });
