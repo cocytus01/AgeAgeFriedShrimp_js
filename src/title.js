@@ -5,10 +5,6 @@ var MyLayer = cc.Layer.extend({
 
         var size = cc.director.getWinSize();
 
-        var start_png = cc.Sprite.create(res.start_png);
-        start_png.setPosition(size.width / 2, size.height / 6);
-        this.addChild(start_png);
-
         //音楽再生エンジン
         audioEngine = cc.audioEngine;
         //bgm再生
@@ -16,10 +12,17 @@ var MyLayer = cc.Layer.extend({
           audioEngine.playMusic(res.bgm_title, true);
         }
 
+        var TitleBG_png = cc.Sprite.create(res.TitleBG_png);
+         TitleBG_png.setPosition(size.width / 2, size.height / 2);
+        this.addChild(TitleBG_png);
 
         var Title_png = cc.Sprite.create(res.Title_png);
          Title_png.setPosition(size.width / 2, size.height / 2 + 50);
         this.addChild(Title_png);
+
+        var start_png = cc.Sprite.create(res.start_png);
+        start_png.setPosition(size.width / 2, size.height / 6);
+        this.addChild(start_png);
         //add code
          //タップイベントリスナーを登録する
         cc.eventManager.addListener({
@@ -42,8 +45,10 @@ var MyLayer = cc.Layer.extend({
         if (audioEngine.isMusicPlaying()) {
           audioEngine.stopMusic();
         }
+        //クリック時のSE再生
+        audioEngine.playEffect("res/zabun.mp3");
+        //audioEngine.playEffect("res/se_select16.wav");
         // 次のシーンに切り替える
-        audioEngine.playEffect("res/se_select16.wav");
         cc.director.runScene(new gameScene());
     },
 });

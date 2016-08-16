@@ -7,6 +7,7 @@ var mylabel;
 var gameLayer;
 var background;
 var scrollSpeed = 1;
+var  HP = 5;
 //宇宙船で追加した部分　重力
 var ship;
 var i =0;
@@ -17,6 +18,8 @@ var gameThrust = 0.1;
 var emitter;
 var audioEngine;
 
+
+
 var gameScene = cc.Scene.extend({
 
   onEnter: function() {
@@ -25,12 +28,17 @@ var gameScene = cc.Scene.extend({
     gameLayer = new game();
     gameLayer.init();
     this.addChild(gameLayer);
+
+    hpdisp = new HPdisp();
+    hpdisp.init();
+    this.addChild(hpdisp);
     //音楽再生エンジン
     audioEngine = cc.audioEngine;
     //bgm再生
     if (!audioEngine.isMusicPlaying()) {
       audioEngine.playMusic(res.bgm_main, true);
     }
+
   },
 
 });
@@ -47,9 +55,14 @@ var game = cc.Layer.extend({
       event: cc.EventListener.MOUSE,
       onMouseDown: function(event) {
         ship.engineOn = true;
+        //泳ぐ時のSE
+        audioEngine.playEffect(res.se_swim);
+
       },
       onMouseUp: function(event) {
         ship.engineOn = false;
+        //audioEngine.playEffect(res.se_swim);で止まらなかった。何故？
+        audioEngine.stopAllEffects();
       }
     }, this)
 
@@ -71,6 +84,8 @@ var game = cc.Layer.extend({
 
     ship = new Ship();
     this.addChild(ship);
+
+
 
     //scheduleUpdate関数は、描画の都度、update関数を呼び出す
     this.scheduleUpdate();
@@ -266,8 +281,8 @@ var Ship = cc.Sprite.extend({
 
     //宇宙船が画面外にでたら、リスタートさせる
     if (this.getPosition().y < 0 || this.getPosition().y > 320) {
-      restartGame();
 
+      restartGame();
     }
   }
 });
@@ -292,10 +307,9 @@ var Asteroid = cc.Sprite.extend({
     if (cc.rectIntersectsRect(shipBoundingBox, asteroidBoundingBox) && ship.invulnerability == 0) {
       gameLayer.removeAsteroid(this); //小惑星を削除する
       //ボリュームを上げる
-      audioEngine.setEffectsVolume(audioEngine.getEffectsVolume() + 0.3);
+      //audioEngine.setEffectsVolume(audioEngine.getEffectsVolume() + 0.3);
       //効果音を再生する
-      audioEngine.playEffect("res/se_get.mp3");
-      //audioEngine.playEffect(res.se_bang);
+      audioEngine.playEffect(res.se_get);
       //bgmの再生をとめる
       /*if (audioEngine.isMusicPlaying()) {
         audioEngine.stopMusic();
@@ -308,13 +322,58 @@ var Asteroid = cc.Sprite.extend({
     }
   }
 });
+//HPの画像表示
+var HPdisp = cc.Layer.extend({
+  //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
+  init: function() {
+    this._super();
+    var Heart = cc.Sprite.create(res.Heart_png);　
+    Heart.setPosition(30, 300);　
+    this.addChild(Heart,0,0);
+
+    var Heart2 = cc.Sprite.create(res.Heart_png);　
+    Heart2.setPosition(60, 300);　
+    this.addChild(Heart2,0,1);
+
+    var Heart3 = cc.Sprite.create(res.Heart_png);　
+    Heart3.setPosition(90, 300);　
+    this.addChild(Heart3,0,2);
+
+    var Heart4 = cc.Sprite.create(res.Heart_png);　
+    Heart4.setPosition(120, 300);　
+    this.addChild(Heart4,0,3);
+
+    var Heart5 = cc.Sprite.create(res.Heart_png);　
+    Heart5.setPosition(150, 300);　
+    this.addChild(Heart5,0,4);
+  }
+});
+
 //宇宙船を元の位置に戻して、宇宙船の変数を初期化する
 function restartGame() {
+  audioEngine.playEffect(res.se_miss);
+
+  HP --;
+  hpdisp.removeChildByTag(HP,true);
+
+  if(HP < 0){
+    audioEngine.playEffect(res.se_death);
+    //BGM終わり
+    if (audioEngine.isMusicPlaying()) {
+      audioEngine.stopMusic();
+      audioEngine.stopAllEffects();
+    }
+    //GameOverSceneへGO
+    cc.director.runScene(new GameOverScene());
+  }
   ship.ySpeed = 0;
   ship.setPosition(ship.getPosition().x, 160);
   ship.invulnerability = 100;
+
+
   //bgmリスタート
   /*if (!audioEngine.isMusicPlaying()) {
     audioEngine.resumeMusic();
   }*/
+
 }

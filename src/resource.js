@@ -6,16 +6,22 @@ var res = {
     under_png:"res/land.png",
     particle_texture:"res/particle_texture.png",//パーティクル
     particle_plist:"res/particle_texture.plist",//パーティクル
+    TitleBG_png:"res/ocean.png",
     Title_png:"res/Title.png",
     start_png:"res/start.png",
+    Heart_png:"res/heart.png",
     shrimp01_png:"res/shrimp01.png",
     shrimp02_png:"res/shrimp02.png",
     shrimp03_png:"res/shrimp03.png",
     shrimp04_png:"res/shrimp04.png",
     nagoya00_png:"res/nagoya0.png",
     nagoya01_png:"res/nagoya1.png",
-    bgm_title:"res/白亜ノ森.m4a",
+    bgm_title:"res/wave.mp3",
     bgm_main:"res/初陣.m4a",
+    se_swim:"res/swim.mp3",
+    se_get:"res/se_get.mp3",
+    se_miss:"res/se_surprise.mp3",
+    se_death:"res/Death.mp3",
 };
 
 var g_resources = [];
