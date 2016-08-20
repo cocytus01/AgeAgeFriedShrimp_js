@@ -9,13 +9,23 @@ var res = {
     TitleBG_png:"res/ocean.png",
     Title_png:"res/Title.png",
     start_png:"res/start.png",
+    gameoverBG_png:"res/ocean2.png",
+    replay_png:"res/replay_button.png",
     Heart_png:"res/heart.png",
+
+    //エビちゃんゾーン
     shrimp01_png:"res/shrimp01.png",
     shrimp02_png:"res/shrimp02.png",
     shrimp03_png:"res/shrimp03.png",
     shrimp04_png:"res/shrimp04.png",
-    nagoya00_png:"res/nagoya0.png",
-    nagoya01_png:"res/nagoya1.png",
+    //ここまでエビちゃんゾーン
+
+    //こっから珊瑚ゾーン
+    sangoUp:"res/coral_above.png",
+    sangoDown:"res/coral_under.png",
+    //ここまで珊瑚ゾーン
+
+    //こっから音楽
     bgm_title:"res/wave.mp3",
     bgm_main:"res/初陣.m4a",
     se_swim:"res/swim.mp3",

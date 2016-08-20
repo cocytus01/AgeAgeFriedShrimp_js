@@ -7,7 +7,8 @@ var mylabel;
 var gameLayer;
 var background;
 var scrollSpeed = 1;
-var  HP = 5;
+var score = 0;
+var HP = 5;
 //宇宙船で追加した部分　重力
 var ship;
 var i =0;
@@ -32,13 +33,16 @@ var gameScene = cc.Scene.extend({
     hpdisp = new HPdisp();
     hpdisp.init();
     this.addChild(hpdisp);
+
     //音楽再生エンジン
     audioEngine = cc.audioEngine;
     //bgm再生
     if (!audioEngine.isMusicPlaying()) {
       audioEngine.playMusic(res.bgm_main, true);
-    }
 
+    }
+    //ボリューム
+    audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main) - 0.5);
   },
 
 });
@@ -85,12 +89,16 @@ var game = cc.Layer.extend({
     ship = new Ship();
     this.addChild(ship);
 
-
+    scoreText = cc.LabelTTF.create("Score:" +score ,"Stencil Std","20",cc.TEXT_ALIGNMENT_CENTER);
+    this.addChild(scoreText);
+    scoreText.setPosition(250,300);
 
     //scheduleUpdate関数は、描画の都度、update関数を呼び出す
     this.scheduleUpdate();
-    //小惑星の生成で追加
+    //アイテム・珊瑚の生成で追加。後ろの数字は恐らく発生秒数か
     this.schedule(this.addAsteroid, 0.5);
+    this.schedule(this.addSangoUp, 5);
+    this.schedule(this.addSangoDown,8);
     //ここからパーティクルの設定
     emitter = cc.ParticleSun.create();
     this.addChild(emitter, 1);
@@ -109,7 +117,17 @@ var game = cc.Layer.extend({
     bgunder.scroll();
     ship.updateY();
   },
-  //小惑星の生成で追加
+  //珊瑚上の生成で追加
+  addSangoUp: function(event) {
+    var sangoUp = new SangoUP();
+    this.addChild(sangoUp);
+  },
+  //珊瑚下の生成で追加
+  addSangoDown: function(event) {
+    var sangoDown = new SangoDOWN();
+    this.addChild(sangoDown);
+  },
+  //アイテムの生成で追加
   addAsteroid: function(event) {
     var asteroid = new Asteroid();
     this.addChild(asteroid);
@@ -119,7 +137,6 @@ var game = cc.Layer.extend({
   },
 
 });
-
 //---------------こっから背景やぞ------------------
 //スクロール移動する背景クラス
 var ScrollingBG = cc.Sprite.extend({
@@ -235,8 +252,6 @@ var ScrollingUNDER = cc.Sprite.extend({
   }
 });
 
-//----------------ここまで背景やぞ-------------------------
-
 //重力（仮）で落下する　宇宙船　
 var Ship = cc.Sprite.extend({
   ctor: function() {
@@ -249,6 +264,7 @@ var Ship = cc.Sprite.extend({
   },
   onEnter: function() {
     this.setPosition(60, 160);
+
   },
   updateY: function() {
     //宇宙船を操作するで追加した部分
@@ -256,7 +272,7 @@ var Ship = cc.Sprite.extend({
       this.ySpeed += gameThrust;
       //ここでパーティクルエフェクトを宇宙船のすぐ後ろに配置している
       emitter.setPosition(this.getPosition().x - 25, this.getPosition().y);
-      //アニメーション
+      //バタバタアニメーション
       i+=1;
       if(i==2){this.initWithFile(res.shrimp02_png);}
       if(i==3){this.initWithFile(res.shrimp03_png);}
@@ -286,11 +302,80 @@ var Ship = cc.Sprite.extend({
     }
   }
 });
-//小惑星クラス
-var Asteroid = cc.Sprite.extend({
+
+//---------こっから珊瑚---------
+var SangoUP = cc.Sprite.extend({
   ctor: function() {
     this._super();
-    this.initWithFile(res.nagoya00_png);
+    this.initWithFile(res.sangoUp);
+  },
+  onEnter: function() {
+    this._super();
+    this.setPosition(600, 400);//Math.random(3) * 320);
+    //動き(速さ,x,y)
+    var moveAction = cc.MoveTo.create(6, new cc.Point(-100,450));
+    this.runAction(moveAction);
+    this.scheduleUpdate();
+  },
+  update: function(dt) {
+    //衝突判定処理
+    var shipBoundingBox = ship.getBoundingBox();
+    var asteroidBoundingBox = this.getBoundingBox();
+    //rectIntersectsRectは２つの矩形が交わっているかチェックする
+    if (cc.rectIntersectsRect(shipBoundingBox, asteroidBoundingBox) && ship.invulnerability == 0) {
+      gameLayer.removeAsteroid(this); //削除する
+      //効果音を再生
+      audioEngine.playEffect(res.se_get);
+      restartGame();
+    }
+    //画面外消去処理
+    if (this.getPosition().x < -50) {
+      gameLayer.removeAsteroid(this)
+    }
+  }
+});
+
+
+var SangoDOWN = cc.Sprite.extend({
+  ctor: function() {
+    this._super();
+    this.initWithFile(res.sangoDown);
+  },
+  onEnter: function() {
+    this._super();
+    this.setPosition(600, -100);//Math.random(3) * 320);
+    //動き(速さ,x,y)
+    var moveAction = cc.MoveTo.create(6, new cc.Point(-100,-150));
+    this.runAction(moveAction);
+    this.scheduleUpdate();
+  },
+  update: function(dt) {
+    //衝突判定処理
+    var shipBoundingBox = ship.getBoundingBox();
+    var asteroidBoundingBox = this.getBoundingBox();
+    //rectIntersectsRectは２つの矩形が交わっているかチェックする
+    if (cc.rectIntersectsRect(shipBoundingBox, asteroidBoundingBox) && ship.invulnerability == 0) {
+      gameLayer.removeAsteroid(this); //削除する
+      //効果音を再生
+      audioEngine.playEffect(res.se_get);
+      restartGame();
+    }
+    //画面外消去処理
+    if (this.getPosition().x < -50) {
+      gameLayer.removeAsteroid(this)
+    }
+  }
+});
+//---------ここまで珊瑚----------
+
+//アイテムクラス
+var Asteroid = cc.Sprite.extend({
+
+  ctor: function() {
+    this._super();
+    //this.initWithFile(res.nagoya + Math.random());
+    this.initWithFile("res/nagoya"+Math.floor(Math.random()*5)+".png");
+    //this.initWithFile(res/nagoya0.png);
   },
   onEnter: function() {
     this._super();
@@ -300,23 +385,25 @@ var Asteroid = cc.Sprite.extend({
     this.scheduleUpdate();
   },
   update: function(dt) {
-    //小惑星との衝突を判定する処理
+    //衝突を判定する処理
     var shipBoundingBox = ship.getBoundingBox();
     var asteroidBoundingBox = this.getBoundingBox();
     //rectIntersectsRectは２つの矩形が交わっているかチェックする
     if (cc.rectIntersectsRect(shipBoundingBox, asteroidBoundingBox) && ship.invulnerability == 0) {
-      gameLayer.removeAsteroid(this); //小惑星を削除する
-      //ボリュームを上げる
-      //audioEngine.setEffectsVolume(audioEngine.getEffectsVolume() + 0.3);
+      gameLayer.removeAsteroid(this); //アイテムを削除する
       //効果音を再生する
       audioEngine.playEffect(res.se_get);
+      //スコアアップ
+      score +=50;
+      scoreText.setString("Score:"+score);
+
       //bgmの再生をとめる
       /*if (audioEngine.isMusicPlaying()) {
         audioEngine.stopMusic();
       }*/
       //restartGame();
     }
-    //画面の外にでた小惑星を消去する処理
+    //画面の外にでたアイテムを消去する処理
     if (this.getPosition().x < -50) {
       gameLayer.removeAsteroid(this)
     }
@@ -354,15 +441,15 @@ function restartGame() {
   audioEngine.playEffect(res.se_miss);
 
   HP --;
-  hpdisp.removeChildByTag(HP,true);
+  hpdisp.removeChildByTag(HP);
 
   if(HP < 0){
-    audioEngine.playEffect(res.se_death);
+
+    HP = 5;
     //BGM終わり
-    if (audioEngine.isMusicPlaying()) {
       audioEngine.stopMusic();
       audioEngine.stopAllEffects();
-    }
+
     //GameOverSceneへGO
     cc.director.runScene(new GameOverScene());
   }
