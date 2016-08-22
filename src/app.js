@@ -212,13 +212,12 @@ var ScrollingUP = cc.Sprite.extend({
   //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
   ctor: function() {
     this._super();
-    //this.initWithFile(res.up_png);
+    this.initWithFile(res.up_png);
   },
   //onEnterメソッドはスプライト描画の際に必ず呼ばれる
   onEnter: function() {
     //背景画像の描画開始位置 横960の画像の中心が、画面の端に設置される
     this.setPosition(size.width, size.height);
-    //this.setPosition(180,160);
   },
   scroll: function() {
     //座標を更新する
@@ -235,7 +234,7 @@ var ScrollingUNDER = cc.Sprite.extend({
   //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
   ctor: function() {
     this._super();
-    //this.initWithFile(res.under_png);
+    this.initWithFile(res.under_png);
   },
   //onEnterメソッドはスプライト描画の際に必ず呼ばれる
   onEnter: function() {
