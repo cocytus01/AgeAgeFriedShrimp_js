@@ -38,18 +38,11 @@ var gameScene = cc.Scene.extend({
     audioEngine = cc.audioEngine;
     //bgm再生
     if (!audioEngine.isMusicPlaying()) {
-      bgm_rnd=Math.floor(Math.random()*2);
-      if(bgm_rnd==0){
-        audioEngine.playMusic(res.bgm_main, true);
-      }
-      if(bgm_rnd==1){
-        audioEngine.playMusic(res.bgm_main2, true);
-      }
+      audioEngine.playMusic(res.bgm_main, true);
 
     }
     //ボリューム
-    audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main) - 0.3);
-    audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main2) - 0.3);
+    audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main) - 0.5);
   },
 
 });
@@ -96,7 +89,7 @@ var game = cc.Layer.extend({
     ship = new Ship();
     this.addChild(ship);
 
-    scoreText = cc.LabelTTF.create("Score:" +score,"怨霊","20",cc.TEXT_ALIGNMENT_CENTER);
+    scoreText = cc.LabelTTF.create("Score:" +score ,"Stencil Std","20",cc.TEXT_ALIGNMENT_CENTER);
     this.addChild(scoreText);
     scoreText.setPosition(250,300);
 
@@ -106,8 +99,6 @@ var game = cc.Layer.extend({
     this.schedule(this.addAsteroid, 0.5);
     this.schedule(this.addSangoUp, 5);
     this.schedule(this.addSangoDown,8);
-
-
     //ここからパーティクルの設定
     emitter = cc.ParticleSun.create();
     this.addChild(emitter, 1);
@@ -115,7 +106,6 @@ var game = cc.Layer.extend({
     emitter.setTexture(myTexture);
     emitter.setStartSize(2);
     emitter.setEndSize(4);
-
 
   },
   update: function(dt) {
@@ -222,7 +212,7 @@ var ScrollingUP = cc.Sprite.extend({
   //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
   ctor: function() {
     this._super();
-    //this.initWithFile(res.up_png);
+    this.initWithFile(res.up_png);
   },
   //onEnterメソッドはスプライト描画の際に必ず呼ばれる
   onEnter: function() {
@@ -245,7 +235,7 @@ var ScrollingUNDER = cc.Sprite.extend({
   //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
   ctor: function() {
     this._super();
-    //this.initWithFile(res.under_png);
+    this.initWithFile(res.under_png);
   },
   //onEnterメソッドはスプライト描画の際に必ず呼ばれる
   onEnter: function() {
@@ -380,10 +370,11 @@ var SangoDOWN = cc.Sprite.extend({
 
 //アイテムクラス
 var Asteroid = cc.Sprite.extend({
+
   ctor: function() {
     this._super();
-    rnd = Math.floor(Math.random()*7);
-    this.initWithFile("res/nagoya"+rnd+".png");
+    //this.initWithFile(res.nagoya + Math.random());
+    this.initWithFile("res/nagoya"+Math.floor(Math.random()*5)+".png");
     //this.initWithFile(res/nagoya0.png);
   },
   onEnter: function() {
@@ -403,11 +394,14 @@ var Asteroid = cc.Sprite.extend({
       //効果音を再生する
       audioEngine.playEffect(res.se_get);
       //スコアアップ
-      /*if(rnd==0){
-        score+=50;
-      }*/
-      score+=10*(rnd+1);
+      score +=50;
       scoreText.setString("Score:"+score);
+
+      //bgmの再生をとめる
+      /*if (audioEngine.isMusicPlaying()) {
+        audioEngine.stopMusic();
+      }*/
+      //restartGame();
     }
     //画面の外にでたアイテムを消去する処理
     if (this.getPosition().x < -50) {
@@ -415,7 +409,6 @@ var Asteroid = cc.Sprite.extend({
     }
   }
 });
-
 //HPの画像表示
 var HPdisp = cc.Layer.extend({
   //ctorはコンストラクタ　クラスがインスタンスされたときに必ず実行される
@@ -452,7 +445,6 @@ function restartGame() {
 
   if(HP < 0){
 
-    //HP初期化
     HP = 5;
     //BGM終わり
       audioEngine.stopMusic();
