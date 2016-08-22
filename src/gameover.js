@@ -12,6 +12,11 @@ var ThirdLayer = cc.Layer.extend({
         label.setPosition(size.width / 2, size.height * 4 / 5);
         this.addChild(label, 1);
 
+        var scorelabel = cc.LabelTTF.create("Score:"+score, "怨霊", 30);
+        scorelabel.setPosition(size.width / 2, size.height /2);
+        this.addChild(scorelabel, 1);
+
+
         var replay_png = cc.Sprite.create(res.replay_png);
         replay_png.setPosition(size.width / 2, size.height / 6);
         this.addChild(replay_png);
@@ -30,7 +35,10 @@ var ThirdLayer = cc.Layer.extend({
     },
     onTouchMoved: function(touch, event) {},
     onTouchEnded: function(touch, event) {
-      audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main) + 0.5);
+      //score 初期化
+      score = 0;
+      audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main) + 0.3);
+      audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main2) + 0.3);
       audioEngine.playEffect("res/zabun.mp3");
       cc.director.runScene(new gameScene());
     },

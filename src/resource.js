@@ -28,6 +28,7 @@ var res = {
     //こっから音楽
     bgm_title:"res/wave.mp3",
     bgm_main:"res/初陣.m4a",
+    bgm_main2:"res/己が信念を杖に.mp3",
     se_swim:"res/swim.mp3",
     se_get:"res/se_get.mp3",
     se_miss:"res/se_surprise.mp3",
