@@ -38,11 +38,17 @@ var gameScene = cc.Scene.extend({
     audioEngine = cc.audioEngine;
     //bgm再生
     if (!audioEngine.isMusicPlaying()) {
+      bgm_rnd=Math.floor(Math.random()*2);
+      if(bgm_rnd==0){
       audioEngine.playMusic(res.bgm_main, true);
-
+      }
+      if(bgm_rnd==1){
+      audioEngine.playMusic(res.bgm_main2, true);
+      }
     }
     //ボリューム
-    audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main) - 0.5);
+    audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main) - 0.3);
+    audioEngine.setMusicVolume(audioEngine.getMusicVolume(res.bgm_main2) - 0.3);
   },
 
 });
@@ -374,7 +380,8 @@ var Asteroid = cc.Sprite.extend({
   ctor: function() {
     this._super();
     //this.initWithFile(res.nagoya + Math.random());
-    this.initWithFile("res/nagoya"+Math.floor(Math.random()*5)+".png");
+    rnd = Math.floor(Math.random()*7)
+    this.initWithFile("res/nagoya"+rnd+".png");
     //this.initWithFile(res/nagoya0.png);
   },
   onEnter: function() {
@@ -394,7 +401,7 @@ var Asteroid = cc.Sprite.extend({
       //効果音を再生する
       audioEngine.playEffect(res.se_get);
       //スコアアップ
-      score +=50;
+      score += 10*(rnd+1);
       scoreText.setString("Score:"+score);
 
       //bgmの再生をとめる
